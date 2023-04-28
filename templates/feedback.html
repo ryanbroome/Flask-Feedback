@@ -1,0 +1,49 @@
+{% extends "base.html" %} {% block title %}{{session['username']}} {% endblock %} {% block content %}
+
+<!-- BEGIN flashed messages -->
+{% for msg in get_flashed_messages() %}
+<div class="alert alert-success">{{msg}}</div>
+{% endfor %}
+<!-- END flashed messages -->
+
+<!-- START feedback  form-->
+<div class="row justify-content-center">
+  <h4 class="display-4 row justify-content-center">add feedback for {{session['username']}}</h4>
+  <div class="col-md-8">
+    <form method="POST">
+      {{ form.hidden_tag() }} {% for field in form if field.widget.input_type != 'hidden'%}
+
+      <div class="form-group">
+        {{field.label}} {{field(class_="form-control")}} {% for err in field.errors %}
+        <small class="form-text text-danger"> {{err}} </small>
+        {% endfor %}
+      </div>
+      {% endfor %}
+
+      <button class="btn btn-success">Feed</button>
+    </form>
+  </div>
+</div>
+<!-- END feedback form -->
+
+<!-- START ADDITIONAL CONTENT -->
+<br />
+<div class="row justify-content-center">This is some blank space left for other information</div>
+<br />
+<!-- END ADDITIONAL CONTENT -->
+
+<!-- START feedback section-->
+<div class="row justify-content-center">
+  {% for feedback in all_feedback %}
+  <div class="list-group col-md-8">
+    <ul class="list-group">
+      <li class="list-group-item">User: {{feedback.user.username}}</li>
+      <li class="list-group-item">Title: {{feedback.title}}</li>
+      <li class="list-group-item">Content: {{feedback.content}}</li>
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+<!-- END feedback section -->
+
+{% endblock %}

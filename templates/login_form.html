@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %} login {% endblock %} {% block content %}
+<div class="container">
+  <h1 class="display-1 text-center">Login</h1>
+  <p class="lead text-center">Login Below. Don't have an account? <a href="/register">Register Here</a></p>
+
+  <!-- BEGIN flash messages -->
+  {% for msg in get_flashed_messages() %}
+  <div class="alert alert-success">{{msg}}</div>
+  {% endfor %}
+  <!-- END flash messages -->
+
+  <!-- BEGIN FORM container -->
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form action="/login" method="POST">
+        {{ form.hidden_tag() }} {% for field in form if field.widget.input_type != 'hidden'%}
+
+        <div class="form-group">
+          {{field.label}} {{field(class_="form-control", required=False)}} {% for err in field.errors %}
+          <small class="form-text text-danger"> {{err}} </small>
+          {% endfor %}
+        </div>
+        {% endfor %}
+
+        <button class="btn btn-success">Login</button>
+      </form>
+    </div>
+  </div>
+  <!-- END form container -->
+</div>
+{% endblock %}
