@@ -21,8 +21,7 @@ toolbar = DebugToolbarExtension(app)
 def show_base_page():
     return render_template('base.html')
 
-
-# ? GET , POST /register when submitted register/create user
+# ? GET, POST /register when submitted register/create user
 @app.route("/register", methods=["GET", "POST"])
 def process_register_form():
     # * create form instance using WTForm
@@ -48,7 +47,7 @@ def process_register_form():
         db.session.commit()
 
         # * flash a success message that has been added
-        flash(f"User {new_user.username} has been added")
+        flash(f"User {new_user.username} has been added", "success")
 
         # * redirect to the home page at successful completion
         # ! This is where you will REDIRECT upon successful registration of a new_user, maybe a user_detail or info page
@@ -59,20 +58,11 @@ def process_register_form():
         # * if unsuccessful or no data in form redirect to the form template page
         return render_template("register_form.html", form=form)
 
-# ?GET /details user details
-@app.route('/details')
-def show_details():
-    if "username" not in session:
-        flash("Please login first")
-        return redirect("/login")
-    return render_template("details.html")
-
 # ? GET /login Show a form that when submitted will login a user. This form should accept a username and password
 @app.route("/login")
 def show_login_form():
     form = UserForm()
     return render_template("login_form.html", form=form)
-
 
 # ? POST / login Process the login form, ensuring the user is authenticated and going to /secret if so
 @app.route("/login", methods=["POST"])
@@ -89,30 +79,31 @@ def process_login_form():
         user = User.authenticate(username, password)
 
         # if validated redirect to details, passing user object to template
+        # if user.username == session["username"]:
         if user:
 
             # welcome message
-            flash(f"Welcome Back! {user.username}")
+            flash(f"Welcome Back! {user.username}", "primary")
 
             # set user to the session
             session["username"] = user.username.lower()
 
             #  to  details page
             return redirect(f"/users/{user.username}")
-        else:
+    else:
             # throw form field error
-            form.username.errors = ["Invalid username/password"]
+        form.username.errors = ["Invalid username/password"]
     #  not validated?  login / register?
     return render_template("login_form.html", form=form)
 
-# ? GET /feedback Return the text "you made it!" (don't worry we'll get rid of this soon)
+# ? GET/POST feedback
 @app.route('/feedback', methods=["GET", "POST"])
 def show_feedback():
     """when user logged into session show feedback form and feedback for user"""
 
     # * check session for logged in user, flash, redirect if no user in session
     if 'username' not in session:
-        flash("Please login or Register first")
+        flash("Please login or Register first", "danger")
         return redirect("/login")
 
     # *if user logged in, create instance of Feedback Form
@@ -121,9 +112,9 @@ def show_feedback():
 
         # *query all feedback
         all_feedback = Feedback.query.all()
-    # * validate form on submit
 
-    # *capture needed variables from form.variable.data can do .lower() .upper()
+    # * validate form on submit
+    # *capture needed variables from form.variable.data .lower()
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
@@ -138,8 +129,10 @@ def show_feedback():
         # *commit new feedback to the database
         db.session.add(new_feedback)
         db.session.commit()
+
         # *flash success message
-        flash('Feedback created')
+        flash('Feedback created', "success")
+
         # *redirect back to feedback as a GET request
         return redirect('/feedback')
 
@@ -150,22 +143,106 @@ def show_feedback():
 @app.route('/logout', methods=["GET", "POST"])
 def logout_user():
     session.pop("username")
-    flash("Successfully logged you out, Goodbye!")
+    flash("Successfully logged you out, Goodbye!", "success")
     return redirect('/')
-
 
 # ? GET /users/<username>
 @app.route("/users/<username>")
 def show_user_details(username):
-    """Show user details for username"""
-
+    """Show user details for single user"""
     if username not in session["username"]:
-        flash("Please login first!")
+        flash("Please login first!", "danger")
         return redirect("/login")
 
     else:
-
         user = User.query.filter_by(username=username).first()
         user_feedback = user.feedback
-
         return render_template("details.html", user=user, user_feedback=user_feedback)
+
+# ? POST /users/<username>/delete
+@app.route("/users/<username>/delete", methods=["POST"])
+def delete_user(username):
+    """delete user details for username given from database"""
+    user = User.query.get_or_404(username)
+    if user.username == session["username"]:
+        all_feedback = user.feedback
+        for f in all_feedback:
+            db.session.delete(f)
+            db.session.commit()
+        db.session.delete(user)
+        db.session.commit()
+        session.pop('username')
+        flash("User and all user feedback have been deleted", "info")
+        return redirect("/")
+
+    # ! LEFT OFF WITH ADDING DELETE ROUTES FOR A USER AND A FEEDBACK
+
+# ? POST /feedback/<id>/delete
+@app.route("/feedback/<int:id>/delete", methods=["POST"])
+def delete_feedback(id):
+    """delete single feedback instance"""
+
+    # * get feedback from db
+    feedback = Feedback.query.get_or_404(id)
+
+    # * check if feedback.username not in session then they can't delete and need to login
+    if feedback.username not in session["username"]:
+        return redirect('/login')
+
+    # * check if username of feedback equals logged in user
+    if feedback.username == session["username"]:
+        db.session.delete(feedback)
+        db.session.commit()
+        flash("Feedback has been deleted", "info")
+        return redirect(f"/feedback")
+        # return redirect(f"/users/{feedback.username}")
+
+# ? GET /POST  "/users/<username>/feedback/add"
+@app.route("/users/<username>/feedback/add", methods=["POST", "GET"])
+def show_feedback_form(username):
+    """render details template and show feedback form"""
+    # * check session for logged in user, flash, redirect if no user in session
+    if 'username' not in session:
+        flash("Please login or Register first", "danger")
+        return redirect("/login")
+
+    # *if user logged in, create instance of Feedback Form
+    else:
+        form = FeedbackForm()
+
+        # * validate form on submit
+        # *capture needed variables from form.variable.data
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+            username = session['username']
+
+            # *create new feedback instance using these variables from form.variable.data
+            new_feedback = Feedback(
+                title=title,
+                content=content,
+                username=username)
+
+            # *commit/update new feedback to the database
+            db.session.add(new_feedback)
+            db.session.commit()
+
+            # *flash success message
+            flash('Feedback created', "success")
+
+            # *redirect back to feedback as a GET request
+            return redirect(f'/users/{username}')
+
+        # *render feedback template, pass in form and all_feedback
+        return render_template("feedback_form.html", form=form)
+
+
+# ? START DELETE UNUSED CODE BLOCKS
+# # GET /details user details
+# @app.route('/details')
+# def show_user_details():
+#     if "username" not in session:
+#         flash("Please login first", "danger")
+#         return redirect("/login")
+#     return render_template("details.html")
+# // END DELETE UNUSED BLOCKS

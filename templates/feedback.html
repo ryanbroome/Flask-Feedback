@@ -1,14 +1,10 @@
 {% extends "base.html" %} {% block title %}{{session['username']}} {% endblock %} {% block content %}
 
-<!-- BEGIN flashed messages -->
-{% for msg in get_flashed_messages() %}
-<div class="alert alert-success">{{msg}}</div>
-{% endfor %}
-<!-- END flashed messages -->
+<!--? START feedback  form-->
+<!-- <div class="row justify-content-center">
+  <h4 class="display-4 row justify-content-center">add to all feedback</h4>
+  <h5 class="display-5 row justify-content-center">{{session['username']}}</h5>
 
-<!-- START feedback  form-->
-<div class="row justify-content-center">
-  <h4 class="display-4 row justify-content-center">add feedback for {{session['username']}}</h4>
   <div class="col-md-8">
     <form method="POST">
       {{ form.hidden_tag() }} {% for field in form if field.widget.input_type != 'hidden'%}
@@ -23,27 +19,34 @@
       <button class="btn btn-success">Feed</button>
     </form>
   </div>
-</div>
-<!-- END feedback form -->
+</div> -->
+<!--! END feedback form -->
 
-<!-- START ADDITIONAL CONTENT -->
+<!-- ?START ADDITIONAL CONTENT -->
 <br />
 <div class="row justify-content-center">This is some blank space left for other information</div>
 <br />
-<!-- END ADDITIONAL CONTENT -->
+<!-- !END ADDITIONAL CONTENT -->
 
-<!-- START feedback section-->
+<!--? START feedback print section-->
 <div class="row justify-content-center">
   {% for feedback in all_feedback %}
-  <div class="list-group col-md-8">
+  <div class="list-group col-md-8" data-id="{{feedback.user.username}}">
     <ul class="list-group">
-      <li class="list-group-item">User: {{feedback.user.username}}</li>
-      <li class="list-group-item">Title: {{feedback.title}}</li>
-      <li class="list-group-item">Content: {{feedback.content}}</li>
+      <li class="list-group-item">{{feedback.title}}</li>
+      <li class="list-group-item">
+        {{feedback.content}} {% if feedback.username == session["username"]%}
+        <form class="card-link" method="POST" style="display: inline-block" action="/feedback/{{feedback.id}}/delete">
+          <button class="btn btn-sm"><i class="fa-solid fa-trash-can"></i></button>
+        </form>
+        {% endif %}
+      </li>
+      <!-- TODO insert icon to represent user from font awesome -->
+      <li class="list-group-item" style="color: #365280"><i class="fa-regular fa-user" style="color: #f2771a"></i> | {{feedback.username}}</li>
     </ul>
   </div>
   {% endfor %}
 </div>
-<!-- END feedback section -->
+<!--! END feedback section -->
 
 {% endblock %}

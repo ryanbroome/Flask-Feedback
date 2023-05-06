@@ -1,41 +1,58 @@
 {% extends "base.html" %} {% block title %} User Details {% endblock %} {% block content %}
-<h1>Show User Details</h1>
-<div class="container" style="margin-top: 2em">
-  <!-- BEGIN flashed messages -->
-  {% for msg in get_flashed_messages() %}
-  <div class="alert alert-success">{{msg}}</div>
-  {% endfor %}
-  <!-- END flashed messages -->
-</div>
 
+<!-- ? BEGIN User card detail -->
+
+<!--? BEGIN logged in content -->
 {% if "username" in session %}
-<div class="container">
-  <ul class="list-group">
-    <div>
-      <li class="list-group-item active">{{user.username}}</li>
+<div class="card-group">
+  <div class="card" style="width: 40rem">
+    <div class="card-body">
+      <ul class="list-group">
+        <div>
+          <li class="list-group-item active card-title">{{user.username}}</li>
+        </div>
+        <div>
+          <li class="list-group-item card-subtitle">Name: {{user.full_name()}}</li>
+        </div>
+        <div>
+          <li class="list-group-item card-link">Email: {{user.email}}</li>
+        </div>
+        <div>
+          <li class="list-group-item card-link">
+            delete
+            <form class="card-link" method="POST" style="display: inline-block" action="/users/{{user.username}}/delete">
+              <button class="btn btn-sm"><i class="fa-solid fa-person-circle-xmark" style="color: #f2771a"></i><i class="fa-solid fa-comment-slash" style="color: #f2771a"></i></button>
+            </form>
+          </li>
+        </div>
+      </ul>
     </div>
-    <div>
-      <li class="list-group-item">Name: {{user.full_name()}}</li>
-    </div>
-    <div>
-      <li class="list-group-item">Email: {{user.email}}</li>
-    </div>
-    <div>
-      <li class="list-group-item">First: {{user.first_name}}</li>
-    </div>
-    <div>
-      <li class="list-group-item">Last: {{user.last_name}}</li>
-    </div>
-  </ul>
+  </div>
 </div>
+<!-- ! END User card detail -->
+<hr />
 
-<div class="container">
+<!--? BEGIN  User Feedback detail-->
+<div class="card-group">
   {% for feedback in user_feedback %}
-  <ul class="list-group">
-    <!-- ! get rid of list item markers via css or via styling -->
-    <li class="list-item"><h3>{{feedback.title}}</h3></li>
-    <li class="list-item"><p>{{feedback.content}}</p></li>
-  </ul>
+  <div class="card" style="width: 40rem">
+    <div class="card-body">
+      <h4 class="card-title text-info">{{feedback.title}}</h4>
+      <p class="card-text">{{feedback.content}}</p>
+
+      <div class="card-footer">
+        <small class="text-body-secondary">
+          <form class="card-link" method="POST" style="display: inline-block" action="/feedback/{{feedback.id}}/delete">
+            <button class="btn btn-sm"><i class="fa-solid fa-trash-can" style="color: #f2771a"></i></button></form
+        ></small>
+      </div>
+    </div>
+  </div>
   {% endfor %}
 </div>
-{% endif %} {% endblock %}
+<!-- ! END Feedback detail -->
+
+{% endif %}
+<!--! END logged in content -->
+
+{% endblock %}

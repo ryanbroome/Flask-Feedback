@@ -1,15 +1,13 @@
 {% extends "base.html" %} {% block title %} login {% endblock %} {% block content %}
+<!-- ? BEGIN login message -->
 <div class="container">
   <h1 class="display-1 text-center">Login</h1>
-  <p class="lead text-center">Login Below. Don't have an account? <a href="/register">Register Here</a></p>
+  <p class="lead text-center">
+    Login Below. Don't have an account? <a href="/register"> <i class="fa-solid fa-user-plus" style="color: #f2771a"></i></a>
+  </p>
+  <!-- ! END login message -->
 
-  <!-- BEGIN flash messages -->
-  {% for msg in get_flashed_messages() %}
-  <div class="alert alert-success">{{msg}}</div>
-  {% endfor %}
-  <!-- END flash messages -->
-
-  <!-- BEGIN FORM container -->
+  <!-- ?BEGIN FORM container -->
   <div class="row justify-content-center">
     <div class="col-md-8">
       <form action="/login" method="POST">
@@ -26,6 +24,6 @@
       </form>
     </div>
   </div>
-  <!-- END form container -->
+  <!--! END form container -->
 </div>
 {% endblock %}

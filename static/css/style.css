@@ -1,0 +1,42 @@
+/*! COLOR CODES */
+/* #f2771a */
+/* #1C1919 */
+/* #295586 */
+/* #365280 */
+/* ! COLOR CODES */
+
+* {
+    font-size: 16px;
+    /* color: #365280; */
+    color: #1c1919;
+}
+
+/* button {
+    border: none;
+    background-color: white;
+    text-decoration: none;
+} */
+
+h5 {
+    text-decoration: underline;
+}
+
+body {
+    background-color: #365280;
+}
+
+nav {
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+    background-color: white;
+}
+
+h1 {
+    top: 20px;
+    color: #f2771a;
+}
+
+.card-group {
+    z-index: 1;
+}

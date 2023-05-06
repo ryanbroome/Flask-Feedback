@@ -1,26 +1,31 @@
-{% extends "base.html" %} {% block title %} Register / New User {% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %} Register User {% endblock %} {% block content %}
+<!-- ? BEGIN register user form -->
 <div class="container">
-  <h1 class="display-1 text-center">Register / New User</h1>
-  <!-- BEGIN flashed messages -->
-  {% for msg in get_flashed_messages() %}
-  <div class="alert alert-success">{{msg}}</div>
-  {% endfor %}
-  <!-- END flashed messages -->
+  <h1 class="display-1 text-center">New User</h1>
+
   <div class="row justify-content-center">
     <div class="col-md-8">
+      <!-- ? BEGIN FORM -->
       <form action="/register" method="POST">
         {{ form.hidden_tag() }} {% for field in form if field.widget.input_type != 'hidden'%}
-
+        <!-- ! END FORM hidden_tag -->
+        <!-- ? BEGIN FORM input / label -->
         <div class="form-group">
-          {{field.label}} {{field(class_="form-control")}} {% for err in field.errors %}
+          {{field.label}} {{field(class_="form-control")}}
+          <!-- ! END FORM input/label -->
+          <!-- ? BEGIN FORM errors -->
+          {% for err in field.errors %}
           <small class="form-text text-danger"> {{err}} </small>
+          <!-- ! END FORM errors -->
           {% endfor %}
         </div>
         {% endfor %}
 
-        <button class="btn btn-success">Register</button>
+        <button class="btn btn-primary"><i class="fa-regular fa-address-card" style="color: #f2771a"></i></button>
       </form>
+      <!-- ! END FORM -->
     </div>
   </div>
 </div>
+<!-- ! END register user form -->
 {% endblock %}
