@@ -1,9 +1,9 @@
 {% extends "base.html" %} {% block title %} User Details {% endblock %} {% block content %}
 
-<!-- ? BEGIN User card detail -->
-
 <!--? BEGIN logged in content -->
 {% if "username" in session %}
+
+<!-- ? BEGIN User card detail -->
 <div class="card-group">
   <div class="card" style="width: 40rem">
     <div class="card-body">
@@ -19,9 +19,8 @@
         </div>
         <div>
           <li class="list-group-item card-link">
-            delete
             <form class="card-link" method="POST" style="display: inline-block" action="/users/{{user.username}}/delete">
-              <button class="btn btn-sm"><i class="fa-solid fa-person-circle-xmark" style="color: #f2771a"></i><i class="fa-solid fa-comment-slash" style="color: #f2771a"></i></button>
+              <button class="btn btn-sm">Delete: User | <i class="fa-solid fa-person-circle-xmark" style="color: #f2771a"></i> | all |<i class="fa-solid fa-comment-slash" style="color: #f2771a"></i></button>
             </form>
           </li>
         </div>
@@ -38,13 +37,16 @@
   <div class="card" style="width: 40rem">
     <div class="card-body">
       <h4 class="card-title text-info">{{feedback.title}}</h4>
-      <p class="card-text">{{feedback.content}}</p>
-
+      <p class="card-text">{{feedback.content}} <form class="card-link" method="GET" style="display: inline-block" action="/feedback/{{feedback.id}}/update">
+        <button class="btn btn-sm" style="color: #365280"><i class="fa-solid fa-pen-to-square" style="color: #365280"></i> | Update</button>
+      </form></p>
       <div class="card-footer">
         <small class="text-body-secondary">
           <form class="card-link" method="POST" style="display: inline-block" action="/feedback/{{feedback.id}}/delete">
-            <button class="btn btn-sm"><i class="fa-solid fa-trash-can" style="color: #f2771a"></i></button></form
-        ></small>
+            <button class="btn btn-sm" style="color: red"><i class="fa-solid fa-trash-can" style="color: red"></i> | Delete</button>
+          </form>
+
+        </small>
       </div>
     </div>
   </div>
@@ -56,3 +58,5 @@
 <!--! END logged in content -->
 
 {% endblock %}
+
+

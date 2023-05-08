@@ -6,30 +6,34 @@ db.create_all()
 
 # ? create instances of user and hash PW by using Class method .register to seed db
 u1 = User.register(
-    username="eddymunsta",
+    username="userONE",
     password="password",
-    email="eddymunsta@gmail.com",
-    first_name="Eddy",
-    last_name="Munsta"
+    email="userONE@gmail.com",
+    first_name="user",
+    last_name="ONE"
 )
 
 u2 = User.register(
-    username="roman",
+    username="userTWO",
     password="password",
-    email="roman@gmail.com",
-    first_name="Roman",
-    last_name="Munsta"
+    email="userTWO@gmail.com",
+    first_name="user",
+    last_name="TWO"
 )
 
 # ? register user instances to hash the pw's using flask_bcrypt before sending to db
-ryan = User.register('ryanb', 'password', 'ryan@gmail.com', 'Ryan', 'Broome')
+ryan = User.register('ryanbroome', 'password',
+                     'ryanbroome@gmail.com', 'Ryan', 'Broome')
 
-f1 = Feedback(title="first eddymunsta feedback",
-              content="I am eddy and i post  content", username=u1.username)
-f2 = Feedback(title="first roman feedback",
-              content="I am Roman and this is my content that I like to post", username=u2.username)
+f1 = Feedback(title="first userONE feedback",
+              content="I am userONE and i post  content", username=u1.username)
+f2 = Feedback(title="first userTWO feedback",
+              content="I am userTWO and this is my content that I like to post", username=u2.username)
 
 
 # ? send to db
-db.session.add_all([u1, u2, ryan, f1, f2])
+db.session.add_all([u1, u2, ryan])
+db.session.commit()
+
+db.session.add_all([f1, f2])
 db.session.commit()

@@ -13,9 +13,6 @@ class RegisterForm(FlaskForm):
     last_name = StringField("last_name", validators=[InputRequired()])
 
 
-# ! The User form will be for logging in JUST USERNAME & PASSWORD and the register form will be to register the user, when registering sometimes you have additional variables you want to save to the db. when logging in the form may just take the username and password to validate the user
-
-
 class UserForm(FlaskForm):
     username = StringField("Username", validators=[InputRequired()])
     password = PasswordField("Password", validators=[

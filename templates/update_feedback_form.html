@@ -1,11 +1,11 @@
-{% extends "base.html" %} {% block title %} Feedback Form {% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %} Update Feedback Form {% endblock %} {% block content %}
 
 <!--? START feedback  form-->
 <div class="row justify-content-center">
-  <h5 class="display-5 row justify-content-center" style="color: #f2771a">{{session['username']}}</h5>
+  <h5 class="display-5 row justify-content-center" style="color: #f2771a">{{session['username']}}, we all rethink our words sometimes...</h5>
 
   <div class="col-md-8">
-    <form action="/users/{{session['username']}}/feedback/add" method="POST">
+    <form action="/feedback/{{feedback.id}}/update" method="POST">
       {{ form.hidden_tag() }} {% for field in form if field.widget.input_type != 'hidden'%}
 
       <div class="form-group">

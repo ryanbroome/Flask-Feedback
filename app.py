@@ -1,15 +1,16 @@
+from secrets_1 import SECRET
 from flask import Flask, jsonify, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User, Feedback
 from forms import UserForm, RegisterForm, FeedbackForm
 
-
 app = Flask(__name__)
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///feedback_users_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
-app.config["SECRET_KEY"] = "super-sized-secret"
+app.config["SECRET_KEY"] = SECRET
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
 connect_db(app)
@@ -72,7 +73,7 @@ def process_login_form():
 
     # validate form data on submit
     if form.validate_on_submit():
-        username = form.username.data.lower()
+        username = form.username.data
         password = form.password.data
 
         # use class method to authenticate user, compare db pwd to user input pwd
@@ -86,7 +87,7 @@ def process_login_form():
             flash(f"Welcome Back! {user.username}", "primary")
 
             # set user to the session
-            session["username"] = user.username.lower()
+            session["username"] = user.username
 
             #  to  details page
             return redirect(f"/users/{user.username}")
@@ -156,8 +157,11 @@ def show_user_details(username):
 
     else:
         user = User.query.filter_by(username=username).first()
-        user_feedback = user.feedback
-        return render_template("details.html", user=user, user_feedback=user_feedback)
+        if user.feedback:
+            user_feedback = user.feedback
+            return render_template("details.html", user=user, user_feedback=user_feedback)
+        else:
+            return render_template("details.html", user=user)
 
 # ? POST /users/<username>/delete
 @app.route("/users/<username>/delete", methods=["POST"])
@@ -193,11 +197,11 @@ def delete_feedback(id):
     if feedback.username == session["username"]:
         db.session.delete(feedback)
         db.session.commit()
-        flash("Feedback has been deleted", "info")
-        return redirect(f"/feedback")
+        flash("Feedback has been deleted", "danger")
+        return redirect(f"/users/{session['username']}")
         # return redirect(f"/users/{feedback.username}")
 
-# ? GET /POST  "/users/<username>/feedback/add"
+# ? GET | POST  "/users/<username>/feedback/add"
 @app.route("/users/<username>/feedback/add", methods=["POST", "GET"])
 def show_feedback_form(username):
     """render details template and show feedback form"""
@@ -236,13 +240,51 @@ def show_feedback_form(username):
         # *render feedback template, pass in form and all_feedback
         return render_template("feedback_form.html", form=form)
 
+# # ? GET | feedback/update
+@app.route("/feedback/<feedback_id>/update", methods=["GET"])
+def show_update_form(feedback_id):
+    """show update form to update a feedback"""
+    feedback = Feedback.query.get_or_404(feedback_id)
+    form = FeedbackForm(obj=feedback)
 
-# ? START DELETE UNUSED CODE BLOCKS
-# # GET /details user details
-# @app.route('/details')
-# def show_user_details():
-#     if "username" not in session:
-#         flash("Please login first", "danger")
-#         return redirect("/login")
-#     return render_template("details.html")
-# // END DELETE UNUSED BLOCKS
+    # * check if feedback.username not in session then they can't delete and need to login
+    if feedback.username not in session["username"]:
+        flash(f"Only the author can update a feedback", "info")
+        return redirect('/login')
+
+    return render_template("update_feedback_form.html", form=form, feedback=feedback)
+
+#  ? POST | /feedback/<feedback_id>/update
+@app.route("/feedback/<feedback_id>/update", methods=["POST"])
+def process_update_form(feedback_id):
+    """Process a form to update feedback, only by the user that wrote feedback"""
+    # * get feedback from db
+    feedback = Feedback.query.get_or_404(feedback_id)
+    form = FeedbackForm()
+
+    # * check if feedback.username not in session then they can't update
+    if feedback.username not in session["username"]:
+        # * need to login
+        flash(f"Only the author can update a feedback", "info")
+        return redirect('/login')
+
+     # * check if username of feedback equals logged in user
+    if feedback.username == session["username"]:
+
+        # * validate form on submit
+        # *capture needed variables from form.variable.data
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+            # // username = session['username']
+
+            # *update feedback instance using these variables from form.variable.data
+            feedback.title = title
+            feedback.content = content
+
+            # *commit new feedback to the database
+            db.session.commit()
+
+            # * flash and redirect to user details page
+            flash("Feedback has been updated", "info")
+            return redirect(f"/users/{session['username']}")
