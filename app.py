@@ -1,16 +1,19 @@
-from secrets_1 import SECRET
+# from secrets_1 import SECRET
 from flask import Flask, jsonify, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User, Feedback
 from forms import UserForm, RegisterForm, FeedbackForm
+import os
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///feedback_users_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
-app.config["SECRET_KEY"] = SECRET
+
+# new os import
+app.config["SECRET_KEY"] = os.environ.get('SECRET_key', 'secret1')
 
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
