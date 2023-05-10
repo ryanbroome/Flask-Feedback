@@ -11,6 +11,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///feedback_users_db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SECRET_KEY"] = SECRET
+
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
 connect_db(app)
