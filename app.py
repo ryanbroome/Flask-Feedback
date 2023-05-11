@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, redirect, flash, session
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 
 from models import db, connect_db, User, Feedback
 from forms import UserForm, RegisterForm, FeedbackForm
@@ -12,12 +12,12 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 # new os import
-app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'super-sized-secret')
+app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'SUPER-sized-secrets')
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
 connect_db(app)
 
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 # ?  GET redirect to /register
 @app.route("/")
