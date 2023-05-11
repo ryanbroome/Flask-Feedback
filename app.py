@@ -1,4 +1,3 @@
-# from secrets_1 import SECRET
 from flask import Flask, jsonify, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
@@ -13,8 +12,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 
 # new os import
-app.config["SECRET_KEY"] = os.environ.get('SECRET_key', 'secret1')
-
+app.config["SECRET_KEY"] = os.environ.get('SECRET_KEY', 'secret1')
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
 connect_db(app)
