@@ -256,6 +256,7 @@ def show_update_form(feedback_id):
 
     return render_template("update_feedback_form.html", form=form, feedback=feedback)
 
+
 #  ? POST | /feedback/<feedback_id>/update
 @app.route("/feedback/<feedback_id>/update", methods=["POST"])
 def process_update_form(feedback_id):
@@ -266,6 +267,7 @@ def process_update_form(feedback_id):
 
     # * check if feedback.username not in session then they can't update
     if feedback.username not in session["username"]:
+
         # * need to login
         flash(f"Only the author can update a feedback", "info")
         return redirect('/login')
